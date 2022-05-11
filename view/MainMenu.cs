@@ -20,7 +20,8 @@ namespace Crypto_analyser {
 
         private void PrintBestDayToBuyAndSell(object sender, EventArgs e) {
             Bitcoin[] bitcoins = Controller.Controller.GetDaysToBuyAndSell(startDatePicker.Value, endDatePicker.Value);            
-            resultLabel.Text = bitcoins[0] == bitcoins[1] ? "Buying Bitcoin isn't recommended." : 
+            resultLabel.Text = bitcoins[0] == bitcoins[1] ?
+                string.Format("The best day to buy Bitcoin: {0}. Selling Bitcoin isn't recommended.", bitcoins[0].DateTime.ToShortDateString()) :
                 string.Format("The best day to buy Bitcoin: {0}. The best date to sell Bitcoin: {1}", bitcoins[0].DateTime.ToShortDateString(), bitcoins[1].DateTime.ToShortDateString());
         }
 

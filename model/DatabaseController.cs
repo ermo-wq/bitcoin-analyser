@@ -73,14 +73,14 @@ namespace Crypto_analyser.Model {
             ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
             List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
 
-            Bitcoin soldBitcoin = bitcoins.OrderByDescending(x => x.Price).First();
-            Bitcoin boughtBicoin = soldBitcoin;
+            Bitcoin boughtBitcoin = bitcoins.OrderBy(x => x.Price).First();
+            Bitcoin soldBitcoin = boughtBitcoin;
 
-            foreach (Bitcoin currentBitcoin in bitcoins) {          // find the lowest price before the sell day to buy
-                boughtBicoin = IsFirstPriceLower(currentBitcoin, soldBitcoin) && IsFirstDateLower(currentBitcoin, soldBitcoin) ? currentBitcoin : boughtBicoin;
+            foreach (Bitcoin currentBitcoin in bitcoins) {
+                soldBitcoin = IsFirstPriceLower(soldBitcoin, currentBitcoin) && IsFirstDateLower(soldBitcoin, currentBitcoin) ? currentBitcoin : soldBitcoin;
             }
 
-            Bitcoin[] bestDaysToBuyAndSell = { boughtBicoin, soldBitcoin };
+            Bitcoin[] bestDaysToBuyAndSell = { boughtBitcoin, soldBitcoin };
             return bestDaysToBuyAndSell;
         }
 
