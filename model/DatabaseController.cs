@@ -5,11 +5,11 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace crypto_analyser.model {
+namespace Crypto_analyser.Model {
     public class ApplicationContext : DbContext {
         public DbSet<Bitcoin> Bitcoins { get; set; } = null!;
 
-        public ApplicationContext() {       // ensure the DB is brand new
+        public ApplicationContext() {       
             Database.EnsureDeleted();
             Database.EnsureCreated();
         }
@@ -19,83 +19,112 @@ namespace crypto_analyser.model {
         }
     }
 
-    public class ApiController {
-        public static BitcoinResponse CreateRequest(string startDate, string endDate) {
+    public static class ApiController {
+        public static BitcoinJsonResponse GetBitcoinsInRange(string startDate, string endDate) {
             string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={startDate}&to={endDate}";     // the url is created including user's input from the form
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse httpResponse = (HttpWebResponse)request.GetResponse();
+            HttpWebRequest jsonRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebResponse jsonResponse = (HttpWebResponse)jsonRequest.GetResponse();
 
-            string response;
-            using (System.IO.StreamReader streamReader = new(httpResponse.GetResponseStream())) {      // get json response
-                response = streamReader.ReadToEnd();
+            string bitcoins;
+            using (System.IO.StreamReader JsonResponseReader = new(jsonResponse.GetResponseStream())) {
+                bitcoins = JsonResponseReader.ReadToEnd();
             }
 
-            BitcoinResponse bitcoinResponse = JsonConvert.DeserializeObject<BitcoinResponse>(response);     // deserialise it
+            BitcoinJsonResponse bitcoinResponse = JsonConvert.DeserializeObject<BitcoinJsonResponse>(bitcoins);
             return bitcoinResponse;
         }
     }
 
-    public class DatabaseController {
-        // select rows where the date is the minimum date per each day = closest to midnight
-        private readonly static string sqlExpression = "SELECT * FROM Bitcoins WHERE date IN (SELECT MIN(date) FROM Bitcoins GROUP BY CAST(date AS DATE))";
+    public static class DatabaseController {
+        private readonly static string sqlExpression = "SELECT * FROM Bitcoins WHERE datetime IN (SELECT MIN(datetime) FROM Bitcoins GROUP BY CAST(datetime AS DATE))";
 
-        public static int CalculateLongestDownward(DateTimeOffset startDate, DateTimeOffset endDate) {
-            ApplicationContext db = DatabaseController.InsertData(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
+        public static int CountDaysWithLongestDownwardTrend(DateTimeOffset startDate, DateTimeOffset endDate) {
+            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
             List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
 
             int counter = 0;
             List<int> counters = new();
 
-            for (int i = 0; i < bitcoins.Count - 1; i++) {          //  if price is higher than the price on the next day, counter++
-                if (bitcoins[i].Price > bitcoins[i + 1].Price) { counter++; } else { counters.Add(counter); counter = 0; }        // else save counter and start from the beginning
+            for (int i = 1; i < bitcoins.Count; i++) {
+                if (IsFirstPriceLower(bitcoins[i], bitcoins[i - 1])) { 
+                    counter++;
+                } else { 
+                    counters.Add(counter); 
+                    counter = 0; 
+                }
             }
 
-            counters.Add(counter);      // in case the price never rises
-            return counters.Max();      // return the longest sequence
+            counters.Add(counter);
+            return counters.Max();
         }
 
-        public static Bitcoin HighestVolume(DateTimeOffset startDate, DateTimeOffset endDate) {
-            ApplicationContext db = DatabaseController.InsertData(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
+
+        public static Bitcoin FindDayWithHighestTradingVolume(DateTimeOffset startDate, DateTimeOffset endDate) {
+            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
             List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
-            
-            Bitcoin bitcoin = bitcoins.OrderByDescending(x => x.Total_volume).First();  // select the first record after ordering by descending total volume = select the record with the max total volume
+
+            Bitcoin bitcoin = bitcoins.OrderByDescending(x => x.Total_volume).First();
 
             return bitcoin;
         }
 
-        public static Bitcoin[] CalculateDayForTrade(DateTimeOffset startDate, DateTimeOffset endDate) {
-            ApplicationContext db = DatabaseController.InsertData(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
+        public static Bitcoin[] FindBestDaysToBuyAndSell(DateTimeOffset startDate, DateTimeOffset endDate) {
+            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
             List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
 
-            Bitcoin sell = bitcoins.OrderByDescending(x => x.Price).First();    // find the date with the highest price to sell
-            Bitcoin buy = sell;
+            Bitcoin soldBitcoin = bitcoins.OrderByDescending(x => x.Price).First();
+            Bitcoin boughtBicoin = soldBitcoin;
 
-            foreach (Bitcoin bitcoin in bitcoins) {          // find the lowest price before that date to buy
-                buy = bitcoin.Date < sell.Date && bitcoin.Price < sell.Price ? bitcoin : buy;
+            foreach (Bitcoin currentBitcoin in bitcoins) {          // find the lowest price before the sell day to buy
+                boughtBicoin = IsFirstPriceLower(currentBitcoin, soldBitcoin) && IsFirstDateLower(currentBitcoin, soldBitcoin) ? currentBitcoin : boughtBicoin;
             }
 
-            Bitcoin[] _bitcoins = { buy, sell };
-            return _bitcoins;
+            Bitcoin[] bestDaysToBuyAndSell = { boughtBicoin, soldBitcoin };
+            return bestDaysToBuyAndSell;
         }
 
-        public static ApplicationContext InsertData(string startDate, string endDate) {
-            ApplicationContext db = new();                                      // create new application context
-            BitcoinResponse data = ApiController.CreateRequest(startDate, endDate);        // get response data from the API            
-
-            for (int i = 0; i < data.Prices.GetLength(0); i++) {            // get length of the first dimension to loop through
+        public static ApplicationContext PrepareBitcoinsDB(string startDate, string endDate) {
+            ApplicationContext db = new();
+            BitcoinJsonResponse bitcoins = ApiController.GetBitcoinsInRange(startDate, endDate);        
+            
+            for (int i = 0; i < bitcoins.Prices.GetLength(0); i++) {            // get length of the first dimension of an array to loop through
                 Bitcoin bitcoin = new() {
-                    Date = DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(data.Prices[i, 0])).DateTime,        // date is always stored in the first column of the array
-                    Price = decimal.Parse(data.Prices[i, 1].Replace('.', ',')),                     // other info is in the second column
-                    Market_cap = decimal.Parse(data.Market_caps[i, 1].Replace('.', ',')),
-                    Total_volume = decimal.Parse(data.Total_volumes[i, 1].Replace('.', ','))
+                    DateTime = GetDateTimeFromBicoinsDB(bitcoins, i),
+                    Price = GetPriceFromBitcoinsDB(bitcoins, i),
+                    Market_cap = GetMarketCapFromBitcoinsDB(bitcoins, i),
+                    Total_volume = GetTotalVolumeFromBitcoinsDB(bitcoins, i)
                 };
 
-                db.Bitcoins.Add(bitcoin);       // add new row into the DB
+                db.Bitcoins.Add(bitcoin);
                 db.SaveChanges();
             }
             
-            return db;     // return applicatoin context       
+            return db;    
+        }
+
+        private static DateTime GetDateTimeFromBicoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(bitcoins.Prices[row, 0])).DateTime;
+        }
+
+        private static decimal GetPriceFromBitcoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return decimal.Parse(bitcoins.Prices[row, 1].Replace('.', ','));
+        }
+
+        private static decimal GetMarketCapFromBitcoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return decimal.Parse(bitcoins.Market_caps[row, 1].Replace('.', ','));
+        }
+
+        private static decimal GetTotalVolumeFromBitcoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return decimal.Parse(bitcoins.Total_volumes[row, 1].Replace('.', ','));
+        }
+
+        private static bool IsFirstPriceLower(Bitcoin currentBitcoin, Bitcoin compareBitcoin) {
+            return currentBitcoin.Price < compareBitcoin.Price;
+        }
+
+        private static bool IsFirstDateLower(Bitcoin currentBitcoin, Bitcoin compareBitcoin) {
+            return currentBitcoin.DateTime < compareBitcoin.DateTime;
         }
     }
 }

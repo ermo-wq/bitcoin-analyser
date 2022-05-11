@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Windows.Forms;
-using crypto_analyser.controller;
+using Crypto_analyser.Model;
+using Crypto_analyser.Controller;
 
-namespace crypto_analyser {
+namespace Crypto_analyser {
     public partial class Form1 : Form {
         public Form1() {
             InitializeComponent();
         }
 
-        private void LongestDownward(object sender, EventArgs e) {  // returns the number of days with the longest downward trend
-            resultLabel.Text = Controller.CalculateLongestDownward(startDatePicker.Value, endDatePicker.Value);
+        private void PrintAmountOfDaysLongestDownward(object sender, EventArgs e) {
+            resultLabel.Text = string.Format("The longest downward trend: {0} days.", Controller.Controller.GetDaysWithLongestDownwardTrend(startDatePicker.Value, endDatePicker.Value));
         }
 
-        private void HighestVolume(object sender, EventArgs e) {    // returns the date with the highest trading volume and the volume
-            resultLabel.Text = Controller.HighestVolume(startDatePicker.Value, endDatePicker.Value);
+        private void PrintDateWithHighestVolumeAndVolume(object sender, EventArgs e) {
+            Bitcoin bitcoin = Controller.Controller.GetBitcoinWithHighestTradingVolume(startDatePicker.Value, endDatePicker.Value);
+            resultLabel.Text = string.Format("Date with the highest trading volume: {0} - {1}", bitcoin.DateTime.ToShortDateString(), Math.Round(bitcoin.Total_volume, 2));
         }
 
-        private void BestDayForTrade(object sender, EventArgs e) {  // return a pair of days - to buy Bitcoin and to sell it
-            resultLabel.Text = Controller.CalculateDayForTrade(startDatePicker.Value, endDatePicker.Value);
+        private void PrintBestDayToBuyAndSell(object sender, EventArgs e) {
+            Bitcoin[] bitcoins = Controller.Controller.GetDaysToBuyAndSell(startDatePicker.Value, endDatePicker.Value);            
+            resultLabel.Text = bitcoins[0] == bitcoins[1] ? "Buying Bitcoin isn't recommended." : 
+                string.Format("The best day to buy Bitcoin: {0}. The best date to sell Bitcoin: {1}", bitcoins[0].DateTime.ToShortDateString(), bitcoins[1].DateTime.ToShortDateString());
         }
 
-        private void ExitApplication(object sender, EventArgs e) {  // exits the application
+        private void ExitApplication(object sender, EventArgs e) {
             Application.Exit();
         }
     }

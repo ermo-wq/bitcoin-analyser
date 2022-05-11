@@ -1,5 +1,5 @@
 ﻿
-namespace crypto_analyser {
+namespace Crypto_analyser {
     partial class Form1 {
         /// <summary>
         /// Required designer variable.
@@ -102,7 +102,7 @@ namespace crypto_analyser {
             this.longestDownwardButton.TabIndex = 6;
             this.longestDownwardButton.Text = "Longest downward trend";
             this.longestDownwardButton.UseVisualStyleBackColor = true;
-            this.longestDownwardButton.Click += new System.EventHandler(this.LongestDownward);
+            this.longestDownwardButton.Click += new System.EventHandler(this.PrintAmountOfDaysLongestDownward);
             // 
             // highestVolumeButton
             // 
@@ -112,7 +112,7 @@ namespace crypto_analyser {
             this.highestVolumeButton.TabIndex = 7;
             this.highestVolumeButton.Text = "Highest trading volume";
             this.highestVolumeButton.UseVisualStyleBackColor = true;
-            this.highestVolumeButton.Click += new System.EventHandler(this.HighestVolume);
+            this.highestVolumeButton.Click += new System.EventHandler(this.PrintDateWithHighestVolumeAndVolume);
             // 
             // bestForTradeButton
             // 
@@ -122,7 +122,7 @@ namespace crypto_analyser {
             this.bestForTradeButton.TabIndex = 8;
             this.bestForTradeButton.Text = "Best days for trade";
             this.bestForTradeButton.UseVisualStyleBackColor = true;
-            this.bestForTradeButton.Click += new System.EventHandler(this.BestDayForTrade);
+            this.bestForTradeButton.Click += new System.EventHandler(this.PrintBestDayToBuyAndSell);
             // 
             // label3
             // 
