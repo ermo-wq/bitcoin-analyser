@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using Crypto_analyser.Model;
-using Crypto_analyser.Controller;
 
 namespace Crypto_analyser {
     public partial class Form1 : Form {
