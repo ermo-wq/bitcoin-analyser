@@ -47,7 +47,7 @@ namespace Crypto_analyser.Model {
             List<int> counters = new();
 
             for (int i = 1; i < bitcoins.Count; i++) {
-                if (IsFirstPriceLower(bitcoins[i], bitcoins[i - 1])) { 
+                if (bitcoins[i].Price < bitcoins[i - 1].Price) { 
                     counter++;
                 } else { 
                     counters.Add(counter); 
@@ -71,17 +71,24 @@ namespace Crypto_analyser.Model {
 
         public static Bitcoin[] FindBestDaysToBuyAndSell(DateTimeOffset startDate, DateTimeOffset endDate) {
             ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
-            List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
+            Bitcoin[] bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToArray();
 
-            Bitcoin boughtBitcoin = bitcoins.OrderBy(x => x.Price).First();
-            Bitcoin soldBitcoin = boughtBitcoin;
+            decimal maxPriceGap = 0;
+            Bitcoin dayToBuy = new();
+            Bitcoin dayToSell = new();
 
-            foreach (Bitcoin currentBitcoin in bitcoins) {
-                soldBitcoin = IsFirstPriceLower(soldBitcoin, currentBitcoin) && IsFirstDateLower(soldBitcoin, currentBitcoin) ? currentBitcoin : soldBitcoin;
+            for(int i = 0; i < bitcoins.Length - 2; i++) {
+                for(int j = 0; j < bitcoins.Length - 1; j++) {
+                    if(bitcoins[j].Price - bitcoins[i].Price > maxPriceGap && bitcoins[i].DateTime < bitcoins[j].DateTime) {
+                        maxPriceGap = bitcoins[j].Price - bitcoins[i].Price;
+                        dayToBuy = bitcoins[i];
+                        dayToSell = bitcoins[j];
+                    }
+                }
             }
 
-            Bitcoin[] bestDaysToBuyAndSell = { boughtBitcoin, soldBitcoin };
-            return bestDaysToBuyAndSell;
+            Bitcoin[] daysToBuyAndToSell = { dayToBuy, dayToSell };
+            return daysToBuyAndToSell;
         }
 
         public static ApplicationContext PrepareBitcoinsDB(string startDate, string endDate) {
@@ -117,14 +124,6 @@ namespace Crypto_analyser.Model {
 
         private static decimal GetTotalVolumeFromBitcoinsDB(BitcoinJsonResponse bitcoins, int row) {
             return decimal.Parse(bitcoins.Total_volumes[row, 1].Replace('.', ','));
-        }
-
-        private static bool IsFirstPriceLower(Bitcoin currentBitcoin, Bitcoin compareBitcoin) {
-            return currentBitcoin.Price < compareBitcoin.Price;
-        }
-
-        private static bool IsFirstDateLower(Bitcoin currentBitcoin, Bitcoin compareBitcoin) {
-            return currentBitcoin.DateTime < compareBitcoin.DateTime;
         }
     }
 }
