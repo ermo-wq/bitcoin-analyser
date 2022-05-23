@@ -22,16 +22,23 @@ namespace Crypto_analyser.Model {
     public static class ApiController {
         public static BitcoinJsonResponse GetBitcoinsInRange(string startDate, string endDate) {
             string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={startDate}&to={endDate}";     // the url is created including user's input from the form
+            BitcoinJsonResponse bitcoinResponse = new();
 
-            HttpWebRequest jsonRequest = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse jsonResponse = (HttpWebResponse)jsonRequest.GetResponse();
+            try {
 
-            string bitcoins;
-            using (System.IO.StreamReader JsonResponseReader = new(jsonResponse.GetResponseStream())) {
-                bitcoins = JsonResponseReader.ReadToEnd();
+                HttpWebRequest jsonRequest = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse jsonResponse = (HttpWebResponse)jsonRequest.GetResponse();
+
+                string bitcoins;
+                using (System.IO.StreamReader JsonResponseReader = new(jsonResponse.GetResponseStream())) {
+                    bitcoins = JsonResponseReader.ReadToEnd();
+                }
+
+                bitcoinResponse = JsonConvert.DeserializeObject<BitcoinJsonResponse>(bitcoins);
+            } catch {
+                Console.WriteLine("Failed getting data from the API");
             }
-
-            BitcoinJsonResponse bitcoinResponse = JsonConvert.DeserializeObject<BitcoinJsonResponse>(bitcoins);
+            
             return bitcoinResponse;
         }
     }
@@ -62,9 +69,14 @@ namespace Crypto_analyser.Model {
 
         public static Bitcoin FindDayWithHighestTradingVolume(DateTimeOffset startDate, DateTimeOffset endDate) {
             ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
-            List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
+            Bitcoin bitcoin = new();
 
-            Bitcoin bitcoin = bitcoins.OrderByDescending(x => x.Total_volume).First();
+            try {
+                List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
+                bitcoin = bitcoins.OrderByDescending(x => x.Total_volume).First();
+            } catch {
+                Console.WriteLine("No corresponding bitcoin found");
+            }
 
             return bitcoin;
         }
@@ -93,7 +105,7 @@ namespace Crypto_analyser.Model {
 
         public static ApplicationContext PrepareBitcoinsDB(string startDate, string endDate) {
             ApplicationContext db = new();
-            BitcoinJsonResponse bitcoins = ApiController.GetBitcoinsInRange(startDate, endDate);        
+            BitcoinJsonResponse bitcoins = ApiController.GetBitcoinsInRange(startDate, endDate);
             
             for (int i = 0; i < bitcoins.Prices.GetLength(0); i++) {            // get length of the first dimension of an array to loop through
                 Bitcoin bitcoin = new() {
@@ -106,7 +118,7 @@ namespace Crypto_analyser.Model {
                 db.Bitcoins.Add(bitcoin);
                 db.SaveChanges();
             }
-            
+
             return db;    
         }
 
