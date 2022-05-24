@@ -37,6 +37,7 @@ namespace Crypto_analyser.Model {
                 bitcoinResponse = JsonConvert.DeserializeObject<BitcoinJsonResponse>(bitcoins);
             } catch (Exception e) {
                 Console.WriteLine("Error: {0}", e.Message);
+
             }
             
             return bitcoinResponse;
@@ -66,42 +67,19 @@ namespace Crypto_analyser.Model {
             return counters.Max();
         }
 
-        public static Bitcoin FindDayWithHighestPrice(DateTimeOffset startDate, DateTimeOffset endDate) {
-            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
-            Bitcoin bitcoin = new();
+        public static Bitcoin[] FindDaysWithHighestAndLowestTradingVolume(long startDate, long endDate) {
+            using ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
+            List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
 
-            try {
-                List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
-                bitcoin = bitcoins.OrderByDescending(x => x.Price).First();
-            }
-            catch (Exception e) {
-                Console.WriteLine("Error: {0}", e.Message);
-            }
+            Bitcoin bitcoinWithLowestVolume = bitcoins.OrderBy(x => x.Total_volume).First();
+            Bitcoin bitcoinWithHighestVolume = bitcoins.OrderByDescending(x => x.Total_volume).First();
 
-            return bitcoin;
-        }
-
-        public static Bitcoin[] FindDayWithHighestAndLowestTradingVolume(long startDate, long endDate) {
-            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
-            Bitcoin[] bitcoinsReturn = { };
-
-            try {
-                List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
-
-                Bitcoin bitcoinWithLowestVolume = bitcoins.OrderBy(x => x.Total_volume).First();
-                Bitcoin bitcoinWithHighestVolume = bitcoins.OrderByDescending(x => x.Total_volume).First();
-
-                bitcoinsReturn.Append(bitcoinWithLowestVolume);
-                bitcoinsReturn.Append(bitcoinWithHighestVolume);
-            } catch (Exception e) {
-                Console.WriteLine("Error: {0}", e.Message);
-            }
-
+            Bitcoin[] bitcoinsReturn = { bitcoinWithLowestVolume, bitcoinWithHighestVolume };
             return bitcoinsReturn;
         }
 
         public static Bitcoin[] FindBestDaysToBuyAndSell(DateTimeOffset startDate, DateTimeOffset endDate) {
-            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
+            using ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
             Bitcoin[] bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToArray();
 
             decimal maxPriceGap = 0;

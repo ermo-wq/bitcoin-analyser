@@ -35,7 +35,6 @@ namespace Crypto_analyser {
             this.bestForTradeButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.resultLabel = new System.Windows.Forms.Label();
-            this.priceButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -107,13 +106,13 @@ namespace Crypto_analyser {
             // 
             // volumeButton
             // 
-            this.volumeButton.Location = new System.Drawing.Point(215, 389);
+            this.volumeButton.Location = new System.Drawing.Point(311, 389);
             this.volumeButton.Name = "volumeButton";
             this.volumeButton.Size = new System.Drawing.Size(176, 40);
             this.volumeButton.TabIndex = 3;
             this.volumeButton.Text = "Trading volume";
             this.volumeButton.UseVisualStyleBackColor = true;
-            this.volumeButton.Click += new System.EventHandler(this.PrintDateWithHighestVolumeAndVolume);
+            this.volumeButton.Click += new System.EventHandler(this.PrintDateWithHighestAndLowestVolume);
             // 
             // bestForTradeButton
             // 
@@ -141,28 +140,17 @@ namespace Crypto_analyser {
             this.resultLabel.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.resultLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.resultLabel.ForeColor = System.Drawing.Color.White;
-            this.resultLabel.Location = new System.Drawing.Point(12, 314);
+            this.resultLabel.Location = new System.Drawing.Point(12, 290);
             this.resultLabel.Name = "resultLabel";
-            this.resultLabel.Size = new System.Drawing.Size(776, 38);
+            this.resultLabel.Size = new System.Drawing.Size(776, 83);
             this.resultLabel.TabIndex = 10;
             this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // priceButton
-            // 
-            this.priceButton.Location = new System.Drawing.Point(414, 389);
-            this.priceButton.Name = "priceButton";
-            this.priceButton.Size = new System.Drawing.Size(176, 40);
-            this.priceButton.TabIndex = 11;
-            this.priceButton.Text = "Price";
-            this.priceButton.UseVisualStyleBackColor = true;
-            this.priceButton.Click += new System.EventHandler(this.PrintDateWithHighestPriceAndPrice);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.priceButton);
             this.Controls.Add(this.resultLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.bestForTradeButton);
@@ -196,7 +184,6 @@ namespace Crypto_analyser {
         private System.Windows.Forms.Button bestForTradeButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label resultLabel;
-        private System.Windows.Forms.Button priceButton;
     }
 }
 
