@@ -30,11 +30,12 @@ namespace Crypto_analyser {
             this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.longestDownwardButton = new System.Windows.Forms.Button();
-            this.highestVolumeButton = new System.Windows.Forms.Button();
+            this.downwardTrendButton = new System.Windows.Forms.Button();
+            this.volumeButton = new System.Windows.Forms.Button();
             this.bestForTradeButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.resultLabel = new System.Windows.Forms.Label();
+            this.priceButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -94,32 +95,32 @@ namespace Crypto_analyser {
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitApplication);
             // 
-            // longestDownwardButton
+            // downwardTrendButton
             // 
-            this.longestDownwardButton.Location = new System.Drawing.Point(12, 389);
-            this.longestDownwardButton.Name = "longestDownwardButton";
-            this.longestDownwardButton.Size = new System.Drawing.Size(176, 40);
-            this.longestDownwardButton.TabIndex = 6;
-            this.longestDownwardButton.Text = "Longest downward trend";
-            this.longestDownwardButton.UseVisualStyleBackColor = true;
-            this.longestDownwardButton.Click += new System.EventHandler(this.PrintAmountOfDaysLongestDownward);
+            this.downwardTrendButton.Location = new System.Drawing.Point(12, 389);
+            this.downwardTrendButton.Name = "downwardTrendButton";
+            this.downwardTrendButton.Size = new System.Drawing.Size(176, 40);
+            this.downwardTrendButton.TabIndex = 2;
+            this.downwardTrendButton.Text = "Longest downward trend";
+            this.downwardTrendButton.UseVisualStyleBackColor = true;
+            this.downwardTrendButton.Click += new System.EventHandler(this.PrintAmountOfDaysLongestDownward);
             // 
-            // highestVolumeButton
+            // volumeButton
             // 
-            this.highestVolumeButton.Location = new System.Drawing.Point(303, 389);
-            this.highestVolumeButton.Name = "highestVolumeButton";
-            this.highestVolumeButton.Size = new System.Drawing.Size(176, 40);
-            this.highestVolumeButton.TabIndex = 7;
-            this.highestVolumeButton.Text = "Highest trading volume";
-            this.highestVolumeButton.UseVisualStyleBackColor = true;
-            this.highestVolumeButton.Click += new System.EventHandler(this.PrintDateWithHighestVolumeAndVolume);
+            this.volumeButton.Location = new System.Drawing.Point(215, 389);
+            this.volumeButton.Name = "volumeButton";
+            this.volumeButton.Size = new System.Drawing.Size(176, 40);
+            this.volumeButton.TabIndex = 3;
+            this.volumeButton.Text = "Trading volume";
+            this.volumeButton.UseVisualStyleBackColor = true;
+            this.volumeButton.Click += new System.EventHandler(this.PrintDateWithHighestVolumeAndVolume);
             // 
             // bestForTradeButton
             // 
             this.bestForTradeButton.Location = new System.Drawing.Point(612, 389);
             this.bestForTradeButton.Name = "bestForTradeButton";
             this.bestForTradeButton.Size = new System.Drawing.Size(176, 40);
-            this.bestForTradeButton.TabIndex = 8;
+            this.bestForTradeButton.TabIndex = 4;
             this.bestForTradeButton.Text = "Best days for trade";
             this.bestForTradeButton.UseVisualStyleBackColor = true;
             this.bestForTradeButton.Click += new System.EventHandler(this.PrintBestDayToBuyAndSell);
@@ -146,16 +147,27 @@ namespace Crypto_analyser {
             this.resultLabel.TabIndex = 10;
             this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // priceButton
+            // 
+            this.priceButton.Location = new System.Drawing.Point(414, 389);
+            this.priceButton.Name = "priceButton";
+            this.priceButton.Size = new System.Drawing.Size(176, 40);
+            this.priceButton.TabIndex = 11;
+            this.priceButton.Text = "Price";
+            this.priceButton.UseVisualStyleBackColor = true;
+            this.priceButton.Click += new System.EventHandler(this.PrintDateWithHighestPriceAndPrice);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.priceButton);
             this.Controls.Add(this.resultLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.bestForTradeButton);
-            this.Controls.Add(this.highestVolumeButton);
-            this.Controls.Add(this.longestDownwardButton);
+            this.Controls.Add(this.volumeButton);
+            this.Controls.Add(this.downwardTrendButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.endDatePicker);
@@ -179,11 +191,12 @@ namespace Crypto_analyser {
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.Button longestDownwardButton;
-        private System.Windows.Forms.Button highestVolumeButton;
+        private System.Windows.Forms.Button downwardTrendButton;
+        private System.Windows.Forms.Button volumeButton;
         private System.Windows.Forms.Button bestForTradeButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label resultLabel;
+        private System.Windows.Forms.Button priceButton;
     }
 }
 
