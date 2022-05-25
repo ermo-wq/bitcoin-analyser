@@ -25,7 +25,6 @@ namespace Crypto_analyser.Model {
             BitcoinJsonResponse bitcoinResponse = new();
 
             try {
-
                 HttpWebRequest jsonRequest = (HttpWebRequest)WebRequest.Create(url);
                 HttpWebResponse jsonResponse = (HttpWebResponse)jsonRequest.GetResponse();
 
@@ -37,7 +36,6 @@ namespace Crypto_analyser.Model {
                 bitcoinResponse = JsonConvert.DeserializeObject<BitcoinJsonResponse>(bitcoins);
             } catch (Exception e) {
                 Console.WriteLine("Error: {0}", e.Message);
-
             }
             
             return bitcoinResponse;
@@ -47,24 +45,37 @@ namespace Crypto_analyser.Model {
     public static class DatabaseController {
         private readonly static string sqlExpression = "SELECT * FROM Bitcoins WHERE datetime IN (SELECT MIN(datetime) FROM Bitcoins GROUP BY CAST(datetime AS DATE))";
 
-        public static int CountDaysWithLongestDownwardTrend(DateTimeOffset startDate, DateTimeOffset endDate) {
-            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
+        public static Bitcoin[] PrepareDataForVisualization(long startDate, long endDate) {
+            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
+            return db.Bitcoins.FromSqlRaw(sqlExpression).ToArray();
+        }
+        
+        public static int CountDaysWithLongestDownwardTrend(long startDate, long endDate) {
+            ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
             List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
 
             int counter = 0;
+            Bitcoin startBitcoin = new();
+            Bitcoin endBitcoin = new();
             List<int> counters = new();
+            List<Bitcoin> pos1 = new();
+            List<Bitcoin> pos2 = new();
+            Bitcoin[] bitcoinsReturn = { };
 
             for (int i = 1; i < bitcoins.Count; i++) {
-                if (bitcoins[i].Price < bitcoins[i - 1].Price) { 
+                if (bitcoins[i].Price < bitcoins[i - 1].Price) {
+                    if (counter == 0) pos1.Add(bitcoins[i]);
                     counter++;
-                } else { 
-                    counters.Add(counter); 
+                } else {
+                    pos2.Add(bitcoins[i]);
+                    counters.Add(counter);
                     counter = 0; 
                 }
             }
 
+            Console.WriteLine("{0}{1}", pos1, pos2);
             counters.Add(counter);
-            return counters.Max();
+            return 0;
         }
 
         public static Bitcoin[] FindDaysWithHighestAndLowestTradingVolume(long startDate, long endDate) {
@@ -78,8 +89,8 @@ namespace Crypto_analyser.Model {
             return bitcoinsReturn;
         }
 
-        public static Bitcoin[] FindBestDaysToBuyAndSell(DateTimeOffset startDate, DateTimeOffset endDate) {
-            using ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToUnixTimeSeconds().ToString(), endDate.ToUnixTimeSeconds().ToString());
+        public static Bitcoin[] FindBestDaysToBuyAndSell(long startDate, long endDate) {
+            using ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
             Bitcoin[] bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToArray();
 
             decimal maxPriceGap = 0;

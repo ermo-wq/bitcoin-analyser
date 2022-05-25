@@ -29,12 +29,14 @@ namespace Crypto_analyser {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.downwardTrendButton = new System.Windows.Forms.Button();
             this.volumeButton = new System.Windows.Forms.Button();
             this.bestForTradeButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.resultLabel = new System.Windows.Forms.Label();
+            this.otherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.visualiseDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,19 +82,12 @@ namespace Crypto_analyser {
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
+            this.otherToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 28);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitApplication);
             // 
             // downwardTrendButton
             // 
@@ -146,6 +141,29 @@ namespace Crypto_analyser {
             this.resultLabel.TabIndex = 10;
             this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // otherToolStripMenuItem
+            // 
+            this.otherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.visualiseDataToolStripMenuItem,
+            this.exitToolStripMenuItem1});
+            this.otherToolStripMenuItem.Name = "otherToolStripMenuItem";
+            this.otherToolStripMenuItem.Size = new System.Drawing.Size(60, 24);
+            this.otherToolStripMenuItem.Text = "Other";
+            // 
+            // visualiseDataToolStripMenuItem
+            // 
+            this.visualiseDataToolStripMenuItem.Name = "visualiseDataToolStripMenuItem";
+            this.visualiseDataToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.visualiseDataToolStripMenuItem.Text = "Visualise data";
+            this.visualiseDataToolStripMenuItem.Click += new System.EventHandler(this.VisualiseData);
+            // 
+            // exitToolStripMenuItem1
+            // 
+            this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
+            this.exitToolStripMenuItem1.Text = "Exit";
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.ExitApplication);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -178,12 +196,14 @@ namespace Crypto_analyser {
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Button downwardTrendButton;
         private System.Windows.Forms.Button volumeButton;
         private System.Windows.Forms.Button bestForTradeButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label resultLabel;
+        private System.Windows.Forms.ToolStripMenuItem otherToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem visualiseDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
     }
 }
 

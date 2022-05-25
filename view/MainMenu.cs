@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Crypto_analyser.Model;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Crypto_analyser {
     public partial class Form1 : Form {
@@ -45,6 +46,33 @@ namespace Crypto_analyser {
 
         private void ConfigureDateTimePicker() {
             startDatePicker.MaxDate = endDatePicker.MaxDate = DateTime.Today;
+        }
+
+        private void VisualiseData(object sender, EventArgs e) {
+            Form dataForm = new();
+            Chart bitcoinChart = new();
+
+            Cursor = Cursors.WaitCursor;
+            Bitcoin[] bitcoins = Controller.Controller.GetBitcoinsForVisualization(startDatePicker.Value, endDatePicker.Value);
+            Cursor = Cursors.Default;
+
+            bitcoinChart.Parent = dataForm;
+            bitcoinChart.Dock = DockStyle.Fill;
+
+            bitcoinChart.ChartAreas.Add(new ChartArea("Bitcoin prices"));
+
+            Series priceSeries = new("Prices");
+            priceSeries.ChartType = SeriesChartType.Line;
+            priceSeries.ChartArea = "Bitcoin prices";
+
+            for(int i = 0; i < bitcoins.Length; i++) {
+                priceSeries.Points.AddXY(bitcoins[i].DateTime.Date, bitcoins[i].Price);
+            }
+
+            bitcoinChart.Series.Add(priceSeries);    
+            
+            dataForm.AutoSize = true;
+            dataForm.ShowDialog();
         }
 
         private void ExitApplication(object sender, EventArgs e) {
