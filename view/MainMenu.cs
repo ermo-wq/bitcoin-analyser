@@ -12,10 +12,10 @@ namespace Crypto_analyser {
 
         private void PrintAmountOfDaysLongestDownward(object sender, EventArgs e) {
             Cursor = Cursors.WaitCursor;
-            int longestDownward = Controller.Controller.GetDaysWithLongestDownwardTrend(startDatePicker.Value, endDatePicker.Value);
+            Bitcoin[] longestDownward = Controller.Controller.GetDaysWithLongestDownwardTrend(startDatePicker.Value, endDatePicker.Value);
             Cursor = Cursors.Default;
 
-            resultLabel.Text = longestDownward == 0 ? "Price didn't go any lower." : string.Format("The longest downward trend: {0} days.", longestDownward);            
+            resultLabel.Text = string.Format("Start date: {0}. End date: {1}", longestDownward[0].DateTime.ToShortDateString(), longestDownward[1].DateTime.ToShortDateString());            
         }
 
         private void PrintDateWithHighestAndLowestVolume(object sender, EventArgs e) {
@@ -71,7 +71,7 @@ namespace Crypto_analyser {
 
             bitcoinChart.Series.Add(priceSeries);    
             
-            dataForm.AutoSize = true;
+            dataForm.Width = 800;
             dataForm.ShowDialog();
         }
 

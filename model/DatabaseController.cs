@@ -50,37 +50,36 @@ namespace Crypto_analyser.Model {
             return db.Bitcoins.FromSqlRaw(sqlExpression).ToArray();
         }
 
-        public static int CountDaysWithLongestDownwardTrend(long startDate, long endDate) {
+        public static Bitcoin[] CountDaysWithLongestDownwardTrend(long startDate, long endDate) {
             ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
             List<Bitcoin> bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToList();
 
             int bitcoinsLength = bitcoins.Count;
-            int longestDownward = CalculateLongestDownward(bitcoins.Select(x => x.Price).ToArray(), bitcoinsLength);
 
-            return longestDownward;
+            int[] sequences = CalculateLongestDownward(bitcoins.Select(x => x.Price).ToArray(), bitcoinsLength);
+            int longestDownward = sequences.Max();
+
+            Bitcoin startDay = bitcoins[Array.IndexOf(sequences, longestDownward) - longestDownward];
+            Bitcoin endDay = bitcoins[Array.IndexOf(sequences, longestDownward)];
+
+            Bitcoin[] startAndEndDates = { startDay, endDay };
+            return startAndEndDates;
         }
 
-        private static int CalculateLongestDownward(decimal[] arr, int n) {
+        private static int[] CalculateLongestDownward(decimal[] arr, int n) {
             int[] sequences = new int[n];
-            int i, max = 0;
 
-            for (i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++) {
                 sequences[i] = 1;
             }
 
-            for (i = 1; i < n; i++) {
+            for (int i = 1; i < n; i++) {
                 if (arr[i] < arr[i - 1]) {
                     sequences[i] = sequences[i - 1] + 1;
                 }
             }
 
-            for (i = 0; i < n; i++) {
-                if (max < sequences[i]) {
-                    max = sequences[i];
-                }
-            }
-
-            return max--;
+            return sequences;
         }
 
         public static Bitcoin[] FindDaysWithHighestAndLowestTradingVolume(long startDate, long endDate) {

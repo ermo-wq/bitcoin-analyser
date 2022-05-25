@@ -8,8 +8,8 @@ namespace Crypto_analyser.Controller {
             return bitcoins;
         }
 
-        public static int GetDaysWithLongestDownwardTrend(DateTimeOffset startDate, DateTimeOffset endDate) {
-            int bitcoins = DatabaseController.CountDaysWithLongestDownwardTrend(ConvertToUTC(startDate).ToUnixTimeSeconds(), ConvertToUTC(endDate).AddDays(1).ToUnixTimeSeconds());
+        public static Bitcoin[] GetDaysWithLongestDownwardTrend(DateTimeOffset startDate, DateTimeOffset endDate) {
+            Bitcoin[] bitcoins = DatabaseController.CountDaysWithLongestDownwardTrend(ConvertToUTC(startDate).ToUnixTimeSeconds(), ConvertToUTC(endDate).AddDays(1).ToUnixTimeSeconds());
             return bitcoins;
         }
 
