@@ -12,10 +12,10 @@ namespace Crypto_analyser {
 
         private void PrintAmountOfDaysLongestDownward(object sender, EventArgs e) {
             Cursor = Cursors.WaitCursor;
-            int amountOfDays = Controller.Controller.GetDaysWithLongestDownwardTrend(startDatePicker.Value, endDatePicker.Value);
+            int longestDownward = Controller.Controller.GetDaysWithLongestDownwardTrend(startDatePicker.Value, endDatePicker.Value);
             Cursor = Cursors.Default;
 
-            resultLabel.Text = amountOfDays == 0 ? "Price didn't go any lower." : string.Format("The longest downward trend: {0} days.", amountOfDays);            
+            resultLabel.Text = longestDownward == 0 ? "Price didn't go any lower." : string.Format("The longest downward trend: {0} days.", longestDownward);            
         }
 
         private void PrintDateWithHighestAndLowestVolume(object sender, EventArgs e) {
