@@ -3,8 +3,8 @@ using Crypto_analyser.Model;
 
 namespace Crypto_analyser.Controller {
     public static class Controller {   
-        public static Bitcoin[] GetBitcoinsForVisualization(DateTimeOffset startDate, DateTimeOffset endDate) {
-            Bitcoin[] bitcoins = DatabaseController.PrepareDataForVisualization(ConvertToUTC(startDate).ToUnixTimeSeconds(), ConvertToUTC(endDate).AddDays(1).ToUnixTimeSeconds());
+        public static Bitcoin[] GetBitcoinPrices(DateTimeOffset startDate, DateTimeOffset endDate) {
+            Bitcoin[] bitcoins = DatabaseController.PrepareBitcoinPricesForVisualization(ConvertToUTC(startDate).ToUnixTimeSeconds(), ConvertToUTC(endDate).AddDays(1).ToUnixTimeSeconds());
             return bitcoins;
         }
 

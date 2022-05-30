@@ -155,7 +155,7 @@ namespace Crypto_analyser {
             this.visualiseDataToolStripMenuItem.Name = "visualiseDataToolStripMenuItem";
             this.visualiseDataToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.visualiseDataToolStripMenuItem.Text = "Visualise data";
-            this.visualiseDataToolStripMenuItem.Click += new System.EventHandler(this.VisualiseData);
+            this.visualiseDataToolStripMenuItem.Click += new System.EventHandler(this.VisualiseBitcoinPrices);
             // 
             // exitToolStripMenuItem1
             // 
