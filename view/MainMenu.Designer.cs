@@ -29,12 +29,14 @@ namespace Crypto_analyser {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.longestDownwardButton = new System.Windows.Forms.Button();
-            this.highestVolumeButton = new System.Windows.Forms.Button();
+            this.downwardTrendButton = new System.Windows.Forms.Button();
+            this.volumeButton = new System.Windows.Forms.Button();
             this.bestForTradeButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.resultLabel = new System.Windows.Forms.Label();
+            this.otherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.visualiseDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,46 +82,39 @@ namespace Crypto_analyser {
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
+            this.otherToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 28);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // exitToolStripMenuItem
+            // downwardTrendButton
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitApplication);
+            this.downwardTrendButton.Location = new System.Drawing.Point(12, 389);
+            this.downwardTrendButton.Name = "downwardTrendButton";
+            this.downwardTrendButton.Size = new System.Drawing.Size(176, 40);
+            this.downwardTrendButton.TabIndex = 2;
+            this.downwardTrendButton.Text = "Longest downward trend";
+            this.downwardTrendButton.UseVisualStyleBackColor = true;
+            this.downwardTrendButton.Click += new System.EventHandler(this.PrintAmountOfDaysLongestDownward);
             // 
-            // longestDownwardButton
+            // volumeButton
             // 
-            this.longestDownwardButton.Location = new System.Drawing.Point(12, 389);
-            this.longestDownwardButton.Name = "longestDownwardButton";
-            this.longestDownwardButton.Size = new System.Drawing.Size(176, 40);
-            this.longestDownwardButton.TabIndex = 6;
-            this.longestDownwardButton.Text = "Longest downward trend";
-            this.longestDownwardButton.UseVisualStyleBackColor = true;
-            this.longestDownwardButton.Click += new System.EventHandler(this.PrintAmountOfDaysLongestDownward);
-            // 
-            // highestVolumeButton
-            // 
-            this.highestVolumeButton.Location = new System.Drawing.Point(303, 389);
-            this.highestVolumeButton.Name = "highestVolumeButton";
-            this.highestVolumeButton.Size = new System.Drawing.Size(176, 40);
-            this.highestVolumeButton.TabIndex = 7;
-            this.highestVolumeButton.Text = "Highest trading volume";
-            this.highestVolumeButton.UseVisualStyleBackColor = true;
-            this.highestVolumeButton.Click += new System.EventHandler(this.PrintDateWithHighestVolumeAndVolume);
+            this.volumeButton.Location = new System.Drawing.Point(311, 389);
+            this.volumeButton.Name = "volumeButton";
+            this.volumeButton.Size = new System.Drawing.Size(176, 40);
+            this.volumeButton.TabIndex = 3;
+            this.volumeButton.Text = "Trading volume";
+            this.volumeButton.UseVisualStyleBackColor = true;
+            this.volumeButton.Click += new System.EventHandler(this.PrintDateWithHighestAndLowestVolume);
             // 
             // bestForTradeButton
             // 
             this.bestForTradeButton.Location = new System.Drawing.Point(612, 389);
             this.bestForTradeButton.Name = "bestForTradeButton";
             this.bestForTradeButton.Size = new System.Drawing.Size(176, 40);
-            this.bestForTradeButton.TabIndex = 8;
+            this.bestForTradeButton.TabIndex = 4;
             this.bestForTradeButton.Text = "Best days for trade";
             this.bestForTradeButton.UseVisualStyleBackColor = true;
             this.bestForTradeButton.Click += new System.EventHandler(this.PrintBestDayToBuyAndSell);
@@ -140,11 +135,34 @@ namespace Crypto_analyser {
             this.resultLabel.BackColor = System.Drawing.Color.DarkSeaGreen;
             this.resultLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.resultLabel.ForeColor = System.Drawing.Color.White;
-            this.resultLabel.Location = new System.Drawing.Point(12, 314);
+            this.resultLabel.Location = new System.Drawing.Point(12, 290);
             this.resultLabel.Name = "resultLabel";
-            this.resultLabel.Size = new System.Drawing.Size(776, 38);
+            this.resultLabel.Size = new System.Drawing.Size(776, 83);
             this.resultLabel.TabIndex = 10;
             this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // otherToolStripMenuItem
+            // 
+            this.otherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.visualiseDataToolStripMenuItem,
+            this.exitToolStripMenuItem1});
+            this.otherToolStripMenuItem.Name = "otherToolStripMenuItem";
+            this.otherToolStripMenuItem.Size = new System.Drawing.Size(60, 24);
+            this.otherToolStripMenuItem.Text = "Other";
+            // 
+            // visualiseDataToolStripMenuItem
+            // 
+            this.visualiseDataToolStripMenuItem.Name = "visualiseDataToolStripMenuItem";
+            this.visualiseDataToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.visualiseDataToolStripMenuItem.Text = "Visualise data";
+            this.visualiseDataToolStripMenuItem.Click += new System.EventHandler(this.VisualiseBitcoinPrices);
+            // 
+            // exitToolStripMenuItem1
+            // 
+            this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
+            this.exitToolStripMenuItem1.Text = "Exit";
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.ExitApplication);
             // 
             // Form1
             // 
@@ -154,8 +172,8 @@ namespace Crypto_analyser {
             this.Controls.Add(this.resultLabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.bestForTradeButton);
-            this.Controls.Add(this.highestVolumeButton);
-            this.Controls.Add(this.longestDownwardButton);
+            this.Controls.Add(this.volumeButton);
+            this.Controls.Add(this.downwardTrendButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.endDatePicker);
@@ -178,12 +196,14 @@ namespace Crypto_analyser {
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.Button longestDownwardButton;
-        private System.Windows.Forms.Button highestVolumeButton;
+        private System.Windows.Forms.Button downwardTrendButton;
+        private System.Windows.Forms.Button volumeButton;
         private System.Windows.Forms.Button bestForTradeButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label resultLabel;
+        private System.Windows.Forms.ToolStripMenuItem otherToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem visualiseDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
     }
 }
 
