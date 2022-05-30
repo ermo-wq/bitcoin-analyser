@@ -49,13 +49,14 @@ namespace Crypto_analyser {
             Bitcoin[] bitcoins = Controller.Controller.GetDaysToBuyAndSell(startDatePicker.Value, endDatePicker.Value);
             Cursor = Cursors.Default;            
 
-            resultLabel.Text = bitcoins[0].Price < bitcoins[1].Price ? string.Format("One should neither buy nor sell.") :
+            resultLabel.Text = bitcoins[0].Price <= bitcoins[1].Price ? string.Format("One should neither buy nor sell.") :
                 string.Format("The best day to buy Bitcoin: {0}. The best day to sell Bitcoin: {1}", bitcoins[0].DateTime.ToShortDateString(), bitcoins[1].DateTime.ToShortDateString());
         }
 
         private void VisualiseBitcoinPrices(object sender, EventArgs e) {
             Form dataForm = new();
-            dataForm.Width = 800;            
+            dataForm.Width = 800; 
+            
             CreateBitcoinPriceChart(dataForm);
             dataForm.ShowDialog();
         }
