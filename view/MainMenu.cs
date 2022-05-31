@@ -20,15 +20,16 @@ namespace Crypto_analyser {
             Bitcoin[] longestDownward = Controller.Controller.GetDaysWithLongestDownwardTrend(startDatePicker.Value, endDatePicker.Value);
             Cursor = Cursors.Default;
 
-            if(!longestDownward.Any(o => o != longestDownward[0])) {
-                resultLabel.Text = "Price didn't go any lower.";
+            if(longestDownward is not null) {
+                TimeSpan amountOfDays = longestDownward[1].DateTime - longestDownward[0].DateTime;
+
+                resultLabel.Text = !longestDownward.Any(o => o != longestDownward[0]) ? "Price didn't go any lower." : string.Format("The price decreased {0} days in a row from {1} to {2}.", 
+                    amountOfDays.Days - 1, longestDownward[0].DateTime.ToShortDateString(), longestDownward[1].DateTime.ToShortDateString());
+
                 return;
             }
 
-            TimeSpan amountOfDays = longestDownward[1].DateTime - longestDownward[0].DateTime;
-
-            resultLabel.Text = string.Format("The price decreased {0} days in a row from {1} to {2}.", 
-                amountOfDays.Days - 1, longestDownward[0].DateTime.ToShortDateString(), longestDownward[1].DateTime.ToShortDateString());            
+            resultLabel.Text = "Couldn't get according data.";
         }
 
         private void PrintDateWithHighestAndLowestVolume(object sender, EventArgs e) {
@@ -36,49 +37,66 @@ namespace Crypto_analyser {
             Bitcoin[] bitcoins = Controller.Controller.GetBitcoinsWithHighestAndLowestVolume(startDatePicker.Value, endDatePicker.Value);
             Cursor = Cursors.Default;
 
-            Bitcoin bitcoinWithLowestVolume = bitcoins[0];
-            Bitcoin bitcoinWithHighestVolume = bitcoins[1];
+            if (bitcoins is not null) {
+                Bitcoin bitcoinWithLowestVolume = bitcoins[0];
+                Bitcoin bitcoinWithHighestVolume = bitcoins[1];
 
-            resultLabel.Text = string.Format("Lowest trading volume: {0} - {1}.\nHighest trading volume: {2} - {3}.",
-                bitcoinWithLowestVolume.DateTime.ToShortDateString(), Math.Round(bitcoinWithLowestVolume.Total_volume, 2),
-                bitcoinWithHighestVolume.DateTime.ToShortDateString(), Math.Round(bitcoinWithHighestVolume.Total_volume, 2));
+                resultLabel.Text = string.Format("Lowest trading volume: {0} - {1}.\nHighest trading volume: {2} - {3}.",
+                    bitcoinWithLowestVolume.DateTime.ToShortDateString(), Math.Round(bitcoinWithLowestVolume.Total_volume, 2),
+                    bitcoinWithHighestVolume.DateTime.ToShortDateString(), Math.Round(bitcoinWithHighestVolume.Total_volume, 2));
+                
+                return;
+            }
+            
+            resultLabel.Text = "Couldn't get according data."; 
         }
 
         private void PrintBestDayToBuyAndSell(object sender, EventArgs e) {
             Cursor = Cursors.WaitCursor;
             Bitcoin[] bitcoins = Controller.Controller.GetDaysToBuyAndSell(startDatePicker.Value, endDatePicker.Value);
-            Cursor = Cursors.Default;            
+            Cursor = Cursors.Default;
 
-            resultLabel.Text = bitcoins[0].Price <= bitcoins[1].Price ? string.Format("One should neither buy nor sell.") :
-                string.Format("The best day to buy Bitcoin: {0}. The best day to sell Bitcoin: {1}", bitcoins[0].DateTime.ToShortDateString(), bitcoins[1].DateTime.ToShortDateString());
+            if (bitcoins is not null) {
+                resultLabel.Text = bitcoins[0].Price <= bitcoins[1].Price ? string.Format("The best day to buy Bitcoin: {0}. The best day to sell Bitcoin: {1}", bitcoins[0].DateTime.ToShortDateString(), bitcoins[1].DateTime.ToShortDateString()) :
+                    string.Format("One should neither buy nor sell.");
+                return;
+            }
+
+            resultLabel.Text = "Couldn't get according data.";
         }
+
 
         private void VisualiseBitcoinPrices(object sender, EventArgs e) {
             Form dataForm = new();
-            dataForm.Width = 800; 
-            
+            dataForm.Width = 800;             
             CreateBitcoinPriceChart(dataForm);
-            dataForm.ShowDialog();
         }
 
         private void CreateBitcoinPriceChart(Form dataForm) {
             Chart bitcoinChart = new();
             Bitcoin[] bitcoins = GetBitcoinPrices();
+            if (bitcoins is not null) {
+                bitcoinChart.Parent = dataForm;
+                bitcoinChart.Dock = DockStyle.Fill;
 
-            bitcoinChart.Parent = dataForm;
-            bitcoinChart.Dock = DockStyle.Fill;
+                bitcoinChart.ChartAreas.Add(new ChartArea("Bitcoin prices"));
 
-            bitcoinChart.ChartAreas.Add(new ChartArea("Bitcoin prices"));
+                Series priceSeries = new("Prices");
+                priceSeries.ChartType = SeriesChartType.Line;
+                priceSeries.ChartArea = "Bitcoin prices";
 
-            Series priceSeries = new("Prices");
-            priceSeries.ChartType = SeriesChartType.Line;
-            priceSeries.ChartArea = "Bitcoin prices";
+                for (int i = 0; i < bitcoins.Length; i++) {
+                    priceSeries.Points.AddXY(bitcoins[i].DateTime.Date, bitcoins[i].Price);
+                }
 
-            for (int i = 0; i < bitcoins.Length; i++) {
-                priceSeries.Points.AddXY(bitcoins[i].DateTime.Date, bitcoins[i].Price);
+                bitcoinChart.Series.Add(priceSeries);
+                dataForm.ShowDialog();
+                return;
             }
 
-            bitcoinChart.Series.Add(priceSeries);
+            MessageBox.Show("Couldn't get according data.");
+            dataForm.Close();
+            return;
         }
 
         private Bitcoin[] GetBitcoinPrices() {
