@@ -29,14 +29,15 @@ namespace Crypto_analyser {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.downwardTrendButton = new System.Windows.Forms.Button();
-            this.volumeButton = new System.Windows.Forms.Button();
-            this.bestForTradeButton = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.resultLabel = new System.Windows.Forms.Label();
             this.otherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visualiseDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.downwardTrendButton = new System.Windows.Forms.Button();
+            this.volumeButton = new System.Windows.Forms.Button();
+            this.buySellButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.resultLabel = new System.Windows.Forms.Label();
+            this.sellBuyButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,6 +90,29 @@ namespace Crypto_analyser {
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // otherToolStripMenuItem
+            // 
+            this.otherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.visualiseDataToolStripMenuItem,
+            this.exitToolStripMenuItem1});
+            this.otherToolStripMenuItem.Name = "otherToolStripMenuItem";
+            this.otherToolStripMenuItem.Size = new System.Drawing.Size(60, 24);
+            this.otherToolStripMenuItem.Text = "Other";
+            // 
+            // visualiseDataToolStripMenuItem
+            // 
+            this.visualiseDataToolStripMenuItem.Name = "visualiseDataToolStripMenuItem";
+            this.visualiseDataToolStripMenuItem.Size = new System.Drawing.Size(183, 26);
+            this.visualiseDataToolStripMenuItem.Text = "Visualise data";
+            this.visualiseDataToolStripMenuItem.Click += new System.EventHandler(this.VisualiseBitcoinPrices);
+            // 
+            // exitToolStripMenuItem1
+            // 
+            this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(183, 26);
+            this.exitToolStripMenuItem1.Text = "Exit";
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.ExitApplication);
+            // 
             // downwardTrendButton
             // 
             this.downwardTrendButton.Location = new System.Drawing.Point(12, 389);
@@ -101,7 +125,7 @@ namespace Crypto_analyser {
             // 
             // volumeButton
             // 
-            this.volumeButton.Location = new System.Drawing.Point(311, 389);
+            this.volumeButton.Location = new System.Drawing.Point(215, 389);
             this.volumeButton.Name = "volumeButton";
             this.volumeButton.Size = new System.Drawing.Size(176, 40);
             this.volumeButton.TabIndex = 3;
@@ -109,15 +133,15 @@ namespace Crypto_analyser {
             this.volumeButton.UseVisualStyleBackColor = true;
             this.volumeButton.Click += new System.EventHandler(this.PrintDateWithHighestAndLowestVolume);
             // 
-            // bestForTradeButton
+            // buySellButton
             // 
-            this.bestForTradeButton.Location = new System.Drawing.Point(612, 389);
-            this.bestForTradeButton.Name = "bestForTradeButton";
-            this.bestForTradeButton.Size = new System.Drawing.Size(176, 40);
-            this.bestForTradeButton.TabIndex = 4;
-            this.bestForTradeButton.Text = "Best days for trade";
-            this.bestForTradeButton.UseVisualStyleBackColor = true;
-            this.bestForTradeButton.Click += new System.EventHandler(this.PrintBestDayToBuyAndSell);
+            this.buySellButton.Location = new System.Drawing.Point(612, 389);
+            this.buySellButton.Name = "buySellButton";
+            this.buySellButton.Size = new System.Drawing.Size(176, 40);
+            this.buySellButton.TabIndex = 4;
+            this.buySellButton.Text = "Find days to buy and sell";
+            this.buySellButton.UseVisualStyleBackColor = true;
+            this.buySellButton.Click += new System.EventHandler(this.PrintBestDayToBuyAndSell);
             // 
             // label3
             // 
@@ -141,37 +165,25 @@ namespace Crypto_analyser {
             this.resultLabel.TabIndex = 10;
             this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // otherToolStripMenuItem
+            // sellBuyButton
             // 
-            this.otherToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.visualiseDataToolStripMenuItem,
-            this.exitToolStripMenuItem1});
-            this.otherToolStripMenuItem.Name = "otherToolStripMenuItem";
-            this.otherToolStripMenuItem.Size = new System.Drawing.Size(60, 24);
-            this.otherToolStripMenuItem.Text = "Other";
-            // 
-            // visualiseDataToolStripMenuItem
-            // 
-            this.visualiseDataToolStripMenuItem.Name = "visualiseDataToolStripMenuItem";
-            this.visualiseDataToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.visualiseDataToolStripMenuItem.Text = "Visualise data";
-            this.visualiseDataToolStripMenuItem.Click += new System.EventHandler(this.VisualiseBitcoinPrices);
-            // 
-            // exitToolStripMenuItem1
-            // 
-            this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(224, 26);
-            this.exitToolStripMenuItem1.Text = "Exit";
-            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.ExitApplication);
+            this.sellBuyButton.Location = new System.Drawing.Point(414, 389);
+            this.sellBuyButton.Name = "sellBuyButton";
+            this.sellBuyButton.Size = new System.Drawing.Size(176, 40);
+            this.sellBuyButton.TabIndex = 11;
+            this.sellBuyButton.Text = "Find days to sell and buy";
+            this.sellBuyButton.UseVisualStyleBackColor = true;
+            this.sellBuyButton.Click += new System.EventHandler(this.PrintBestDayToSellAndBuy);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.sellBuyButton);
             this.Controls.Add(this.resultLabel);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.bestForTradeButton);
+            this.Controls.Add(this.buySellButton);
             this.Controls.Add(this.volumeButton);
             this.Controls.Add(this.downwardTrendButton);
             this.Controls.Add(this.label2);
@@ -198,12 +210,13 @@ namespace Crypto_analyser {
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.Button downwardTrendButton;
         private System.Windows.Forms.Button volumeButton;
-        private System.Windows.Forms.Button bestForTradeButton;
+        private System.Windows.Forms.Button buySellButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label resultLabel;
         private System.Windows.Forms.ToolStripMenuItem otherToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem visualiseDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
+        private System.Windows.Forms.Button sellBuyButton;
     }
 }
 

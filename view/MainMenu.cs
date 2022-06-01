@@ -24,7 +24,7 @@ namespace Crypto_analyser {
                 TimeSpan amountOfDays = longestDownward[1].DateTime - longestDownward[0].DateTime;
 
                 resultLabel.Text = !longestDownward.Any(o => o != longestDownward[0]) ? "Price didn't go any lower." : string.Format("The price decreased {0} days in a row from {1} to {2}.", 
-                    amountOfDays.Days - 1, longestDownward[0].DateTime.ToShortDateString(), longestDownward[1].DateTime.ToShortDateString());
+                    amountOfDays.Days, longestDownward[0].DateTime.ToShortDateString(), longestDownward[1].DateTime.ToShortDateString());
 
                 return;
             }
@@ -49,6 +49,20 @@ namespace Crypto_analyser {
             }
             
             resultLabel.Text = "Couldn't get according data."; 
+        }
+
+        private void PrintBestDayToSellAndBuy(object sender, EventArgs e) {
+            Cursor = Cursors.WaitCursor;
+            Bitcoin[] bitcoins = Controller.Controller.GetDaysToSellAndBuy(startDatePicker.Value, endDatePicker.Value);
+            Cursor = Cursors.Default;
+
+            if (bitcoins is not null) {
+                resultLabel.Text = bitcoins[0].Price >= bitcoins[1].Price ? string.Format("The best day to sell Bitcoin: {0}. The best day to buy Bitcoin: {1}", bitcoins[0].DateTime.ToShortDateString(), bitcoins[1].DateTime.ToShortDateString()) :
+                    string.Format("One should neither sell nor buy.");
+                return;
+            }
+
+            resultLabel.Text = "Couldn't get according data.";
         }
 
         private void PrintBestDayToBuyAndSell(object sender, EventArgs e) {

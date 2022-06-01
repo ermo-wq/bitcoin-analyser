@@ -65,9 +65,8 @@ namespace Crypto_analyser.Model {
                 int[] sequences = CalculateLongestDownward(bitcoins.Select(x => x.Price).ToArray(), bitcoinsLength);
                 int longestDownward = sequences.Max();
 
-                Bitcoin startBitcoin = bitcoins[Array.IndexOf(sequences, longestDownward) - longestDownward];
+                Bitcoin startBitcoin = bitcoins[(Array.IndexOf(sequences, longestDownward) - longestDownward) + 1];
                 Bitcoin endBitcoin = bitcoins[Array.IndexOf(sequences, longestDownward)];
-
 
                 Bitcoin[] startAndEndBitcoins = { startBitcoin, endBitcoin };
                 return startAndEndBitcoins;
@@ -109,6 +108,33 @@ namespace Crypto_analyser.Model {
             return null;
         }
 
+        public static Bitcoin[] FindBestDayToSellAndBuy(long startDate, long endDate) {
+            using ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
+
+            if (db is not null) {
+                Bitcoin[] bitcoins = db.Bitcoins.FromSqlRaw(sqlExpression).ToArray();
+
+                decimal maxPriceGap = 0;
+                Bitcoin dayToBuy = new();
+                Bitcoin dayToSell = new();
+
+                for (int i = 0; i < bitcoins.Length; i++) {
+                    for (int j = 0; j < bitcoins.Length; j++) {
+                        if (bitcoins[i].Price - bitcoins[j].Price > maxPriceGap && bitcoins[i].DateTime < bitcoins[j].DateTime) {
+                            maxPriceGap = bitcoins[i].Price - bitcoins[j].Price;
+                            dayToSell = bitcoins[i];
+                            dayToBuy = bitcoins[j];
+                        }
+                    }
+                }
+
+                Bitcoin[] daysToSellAndBuy = { dayToSell, dayToBuy };
+                return daysToSellAndBuy;
+            }
+
+            return null;
+        }
+
         public static Bitcoin[] FindBestDaysToBuyAndSell(long startDate, long endDate) {
             using ApplicationContext db = DatabaseController.PrepareBitcoinsDB(startDate.ToString(), endDate.ToString());
             
@@ -119,8 +145,8 @@ namespace Crypto_analyser.Model {
                 Bitcoin dayToBuy = new();
                 Bitcoin dayToSell = new();
 
-                for (int i = 0; i < bitcoins.Length - 2; i++) {
-                    for (int j = 0; j < bitcoins.Length - 1; j++) {
+                for (int i = 0; i < bitcoins.Length; i++) {
+                    for (int j = 0; j < bitcoins.Length; j++) {
                         if (bitcoins[j].Price - bitcoins[i].Price > maxPriceGap && bitcoins[i].DateTime < bitcoins[j].DateTime) {
                             maxPriceGap = bitcoins[j].Price - bitcoins[i].Price;
                             dayToBuy = bitcoins[i];

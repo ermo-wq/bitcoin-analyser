@@ -13,6 +13,11 @@ namespace Crypto_analyser.Controller {
             return bitcoins;
         }
 
+        public static Bitcoin[] GetDaysToSellAndBuy(DateTimeOffset startDate, DateTimeOffset endDate) {
+            Bitcoin[] bitcoins = DatabaseController.FindBestDayToSellAndBuy(ConvertToUTC(startDate).ToUnixTimeSeconds(), ConvertToUTC(endDate).AddDays(1).ToUnixTimeSeconds());
+            return bitcoins;
+        }
+
         public static Bitcoin[] GetDaysToBuyAndSell(DateTimeOffset startDate, DateTimeOffset endDate) {
             Bitcoin[] bitcoins = DatabaseController.FindBestDaysToBuyAndSell(ConvertToUTC(startDate).ToUnixTimeSeconds(), ConvertToUTC(endDate).AddDays(1).ToUnixTimeSeconds());
             return bitcoins;
